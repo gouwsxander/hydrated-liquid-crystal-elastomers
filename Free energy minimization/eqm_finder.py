@@ -1,5 +1,5 @@
 import numpy as np
-import sympy as sp
+from scipy.integrate import simpson
 
 def calc_sin_squared_half_arccot(x: np.ndarray) -> np.ndarray:
     return 0.5 - 0.5 * x / np.sqrt(x**2 + 1)
@@ -14,17 +14,17 @@ def calc_cot_double_psi(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta
     """Return `cot(2*psi)` where psi is the post-transformation twist angle."""
     lambda_z = v_swell / lambda_r**2
 
-    numerator_A = (lambda_z**2 + lambda_r**2) * (zeta - 1) * np.cos(2 * psi_0)
-    numerator_B = (lambda_z**2 - lambda_r**2) * (zeta + 1)
+    numerator_1 = (lambda_z**2 + lambda_r**2) * (zeta - 1) * np.cos(2 * psi_0)
+    numerator_2 = (lambda_z**2 - lambda_r**2) * (zeta + 1)
     denominator = 2 * lambda_r * lambda_z * (zeta - 1) * np.sin(2 * psi_0)
 
-    return (numerator_A + numerator_B) / denominator
+    return (numerator_1 + numerator_2) / denominator
 
 def calc_tan_double_psi(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta: float) -> np.ndarray:
     return 1 / calc_cot_double_psi(psi_0, lambda_r, v_swell, zeta)
 
-def calc_free_energy_density_per_mu(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta: float) -> np.ndarray:
-    """Calculate the free energy density relative to mu"""
+def calc_reduced_free_energy_density(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta: float) -> np.ndarray:
+    """Calculate the free energy density relative to mu."""
     cos_squared_psi_0 = np.cos(psi_0)**2
     sin_squared_psi_0 = np.sin(psi_0)**2
     sin_double_psi_0 = np.sin(2 * psi_0)
@@ -47,3 +47,13 @@ def calc_free_energy_density_per_mu(psi_0: np.ndarray, lambda_r: float, v_swell:
     term_3 = lambda_z * lambda_r * ((2 - zeta - 1/zeta) * sin_double_psi_0 * sin_double_psi)/2
 
     return (term_1 + term_2 + term_3) / 2
+
+def calc_reduced_free_energy_linear_twist_angle(psi_0_surf: float, lambda_r: float, v_swell: float, zeta: float,
+                                                array_length: int = 1000) -> float:
+    reduced_radii = np.linspace(0, 1, array_length)
+
+    psi_0 = lambda_r * psi_0_surf * reduced_radii
+
+    reduced_free_energy_density = calc_reduced_free_energy_density(psi_0, lambda_r, v_swell, zeta)
+
+    return 2 * simpson(reduced_free_energy_density * reduced_radii, reduced_radii)
