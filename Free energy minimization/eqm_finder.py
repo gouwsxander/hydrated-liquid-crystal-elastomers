@@ -20,8 +20,8 @@ def calc_cot_double_psi(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta
 
     return (numerator_1 + numerator_2) / denominator
 
-def calc_tan_double_psi(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta: float) -> np.ndarray:
-    return 1 / calc_cot_double_psi(psi_0, lambda_r, v_swell, zeta)
+def calc_psi(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta: float) -> np.ndarray:
+    return np.pi/2 - np.arctan(calc_cot_double_psi(psi_0, lambda_r, v_swell, zeta))
 
 def calc_reduced_free_energy_density(psi_0: np.ndarray, lambda_r: float, v_swell: float, zeta: float) -> np.ndarray:
     """Calculate the free energy density relative to mu."""
