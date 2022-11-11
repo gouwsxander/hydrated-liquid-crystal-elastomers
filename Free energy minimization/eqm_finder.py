@@ -50,7 +50,7 @@ def calc_reduced_free_energy_density(psi_0: np.ndarray, lambda_r: float, v_swell
 
 def calc_reduced_free_energy_linear_twist_angle(psi_0_surf: float, lambda_r: float, v_swell: float, zeta: float,
                                                 array_length: int = 1000) -> float:
-    reduced_radii = np.linspace(0, 1, array_length)
+    reduced_radii = np.linspace(0, 1, array_length+1)[1:]
 
     psi_0 = lambda_r * psi_0_surf * reduced_radii
 
