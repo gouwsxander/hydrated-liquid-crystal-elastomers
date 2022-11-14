@@ -38,6 +38,8 @@ def compare_hair_collagen():
     plt.xlabel("Radial deformation, $\\lambda_r$")
     plt.ylabel("Dimensionless free energy density, $f/\\mu$")
 
+    plt.legend(loc='best')
+
     #plt.yscale('log')
 
     plt.show()
@@ -101,12 +103,12 @@ def plot_linear_free_energy_vs_lambda_r(v_swell, zeta, psi_surf, label):
     plt.plot(lambda_r_array, free_energy_density_per_mu_array, label = label)
 
 if __name__ == "__main__":
-    # compare_hair_collagen()
+    compare_hair_collagen()
     #vary_hydration([1,1.25,1.5,1.75,2], 1.3, np.pi/180)
 
     #vary_twist_angle(np.array([1, 15, 30, 45]) * np.pi/180, 1.5, 1.3)
 
-    plot_linear_free_energy_vs_lambda_r(2, 1.3, 1 * np.pi/180, "Collagen")
-    plot_linear_free_energy_vs_lambda_r(1.3, 1.3, 45 * np.pi/180, "Hair")
+    #plot_linear_free_energy_vs_lambda_r(2, 1.3, 1 * np.pi/180, "Collagen")
+    #plot_linear_free_energy_vs_lambda_r(1.3, 1.3, 45 * np.pi/180, "Hair")
     plt.show()
     
