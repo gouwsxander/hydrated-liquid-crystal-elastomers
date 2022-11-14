@@ -7,7 +7,7 @@ def against_lambda_r(lambda_r_array: np.ndarray, psi_0_array: np.ndarray, v_swel
     for psi_0 in psi_0_array:
         psi_array = eqm_finder.calc_psi(psi_0, lambda_r_array, v_swell, zeta)
 
-        plt.plot(lambda_r_array, psi_array * 180/np.pi, label = f"$\\psi_0 = {psi_0 * 180 / np.pi:.02f}^\\circ$")
+        plt.plot(lambda_r_array, psi_array * 180/np.pi, label = f"$\\psi_0 = {psi_0 * 180 / np.pi:.0f}^\\circ$")
 
     plt.legend(loc = 'best')
 
@@ -36,23 +36,27 @@ def against_psi_0(lambda_r_array: np.ndarray, psi_0_array: np.ndarray, v_swell, 
     plt.ylabel('Final twist-angle, $\\psi$ ($^\\circ$)')
 
 def main():
+    plt.rcParams.update({'font.size': 8})
+
     v_swell = 2
-    zeta = 1.5
+    zeta = 1.3
 
-    # lambda_r_array = np.linspace(0.5, 2, 1000)
-    # psi_0_array = np.array([0.1, 1, 15, 30, 45]) * np.pi / 180
-    # against_lambda_r(lambda_r_array, psi_0_array, v_swell, zeta)
+    plt.figure(figsize=(6, 4), dpi = 400)
+    lambda_r_array = np.linspace(0.5, 2, 1000)
+    psi_0_array = np.array([1e-9, 15, 30, 45]) * np.pi / 180
+    against_lambda_r(lambda_r_array, psi_0_array, v_swell, zeta)
+    plt.savefig("Figures/psi_vs_lambda_r.pdf", bbox_inches='tight')
+
+    plt.figure(figsize=(6, 4), dpi = 400)
+    psi_0_array = np.linspace(0.01, 90, 1000) * np.pi / 180
+    lambda_r_array = np.array([1, 1.1, 1.2, 1.3, 1.4, 1.5])
+    against_psi_0(lambda_r_array, psi_0_array, v_swell, zeta)
+    plt.savefig("Figures/psi_vs_psi_0.pdf", bbox_inches='tight')
+
+    # psi_0_array = np.linspace(0.01, 10, 1000) * np.pi / 180
+    # lambda_r_array = np.linspace(1.3, 1.4, 9) #np.array([1, 1.2, 1.4, 1.6])
+    # against_psi_0(lambda_r_array, psi_0_array, v_swell, zeta, include_small_angle = True)
     # plt.show()
-
-    # psi_0_array = np.linspace(0.01, 90, 1000) * np.pi / 180
-    # lambda_r_array = np.array([1, 1.1, 1.2, 1.3, 1.4, 1.5])
-    # against_psi_0(lambda_r_array, psi_0_array, v_swell, zeta)
-    # plt.show()
-
-    psi_0_array = np.linspace(0.01, 10, 1000) * np.pi / 180
-    lambda_r_array = np.linspace(1.3, 1.4, 9) #np.array([1, 1.2, 1.4, 1.6])
-    against_psi_0(lambda_r_array, psi_0_array, v_swell, zeta, include_small_angle = True)
-    plt.show()
 
 if __name__ == "__main__":
     main()

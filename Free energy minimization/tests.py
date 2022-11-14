@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import eqm_finder
 
 def plot_free_energy_vs_lambda_r(v_swell, zeta, psi_0, label):
-    lambda_r_min = 1.0
-    lambda_r_max = 1.6
+    lambda_r_min = 0.5
+    lambda_r_max = 1.5
     num_points = 1000
     lambda_r_array = np.linspace(lambda_r_min, lambda_r_max, num_points)
 
@@ -90,25 +90,34 @@ def vary_hydration_deriv(v_swell_array, zeta, psi_0):
     plt.show()
 
 def plot_linear_free_energy_vs_lambda_r(v_swell, zeta, psi_surf, label):
-    lambda_r_min = 0.9
-    lambda_r_max = 1.6
+    lambda_r_min = 0.5
+    lambda_r_max = 1.5
     num_points = 1000
     lambda_r_array = np.linspace(lambda_r_min, lambda_r_max, num_points)
 
-    free_energy_density_per_mu_array = np.zeros(num_points)
+    free_energy_per_mu_array = np.zeros(num_points)
 
     for index, lambda_r in enumerate(lambda_r_array):
-        free_energy_density_per_mu_array[index] = eqm_finder.calc_reduced_free_energy_linear_twist_angle(psi_surf, lambda_r, v_swell, zeta)
+        free_energy_per_mu_array[index] = eqm_finder.calc_reduced_free_energy_linear_twist_angle(psi_surf, lambda_r, v_swell, zeta)
 
-    plt.plot(lambda_r_array, free_energy_density_per_mu_array, label = label)
+    plt.plot(lambda_r_array, free_energy_per_mu_array, label = label)
 
 if __name__ == "__main__":
-    compare_hair_collagen()
-    #vary_hydration([1,1.25,1.5,1.75,2], 1.3, np.pi/180)
+    #compare_hair_collagen()
+    #vary_hydration([1,1.25,1.5,1.75,2], 1.3, 1 * np.pi/180)
 
     #vary_twist_angle(np.array([1, 15, 30, 45]) * np.pi/180, 1.5, 1.3)
 
-    #plot_linear_free_energy_vs_lambda_r(2, 1.3, 1 * np.pi/180, "Collagen")
-    #plot_linear_free_energy_vs_lambda_r(1.3, 1.3, 45 * np.pi/180, "Hair")
+    #plot_linear_free_energy_vs_lambda_r(0.5, 1.3, np.pi/180, "Collagen (Linear)")
+    #plot_free_energy_vs_lambda_r(0.5, 1.3, np.pi/180, "Collagen (Constant) 1.3")
+    plot_linear_free_energy_vs_lambda_r(0.5, 1.3, np.pi/180, "Collagen 1.3")
+    plot_linear_free_energy_vs_lambda_r(0.5, 1.2, np.pi/180, "Collagen 1.2")
+    plot_linear_free_energy_vs_lambda_r(0.5, 1.1, np.pi/180, "Collagen 1.1")
+    plot_linear_free_energy_vs_lambda_r(0.5, 0.8, np.pi/180, "Collagen 0.8")
+
+    #plot_linear_free_energy_vs_lambda_r(1.3, 1.3, 45 * np.pi/180, "Hair (Linear)")
+    #plot_free_energy_vs_lambda_r(1.3, 1.3, 45 * np.pi/180, "Hair (Constant)")
+
+    plt.legend(loc='best')
     plt.show()
     
