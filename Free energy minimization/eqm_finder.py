@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.integrate import simpson
+from scipy.signal import argrelextrema
 
 def calc_sin_squared_half_arccot(x: np.ndarray) -> np.ndarray:
     return 0.5 - 0.5 * x / np.sqrt(x**2 + 1)
@@ -58,3 +59,9 @@ def calc_reduced_free_energy_linear_twist_angle(psi_0_surf: float, lambda_r: flo
     reduced_free_energy_density = calc_reduced_free_energy_density(psi_0, lambda_r, v_swell, zeta)
 
     return 2 * simpson(reduced_free_energy_density * reduced_radii, reduced_radii)
+
+def find_local_optima(array):
+    local_maxima = argrelextrema(array, np.greater_equal)
+    local_minima = argrelextrema(array, np.less_equal)
+
+    return local_minima, local_maxima
