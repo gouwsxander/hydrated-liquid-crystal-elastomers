@@ -61,7 +61,10 @@ def calc_reduced_free_energy_linear_twist_angle(psi_0_surf: float, lambda_r: flo
     return 2 * simpson(reduced_free_energy_density * reduced_radii, reduced_radii)
 
 def find_local_optima(array):
-    local_maxima = argrelextrema(array, np.greater_equal)
-    local_minima = argrelextrema(array, np.less_equal)
+    local_maxima = argrelextrema(array, np.greater_equal)[0]
+    local_minima = argrelextrema(array, np.less_equal)[0]
 
-    return local_minima, local_maxima
+    # filter end points
+    filtered_local_maxima = [local_maximum for local_maximum in local_maxima if 0 < local_maximum < len(array) - 1]
+
+    return local_minima, filtered_local_maxima
