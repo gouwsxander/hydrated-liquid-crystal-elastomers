@@ -221,9 +221,36 @@ def create_initial_twist_angle_plots():
                                     anisotropy, swell_ratio,
                                     2.37, 2.47)
 
+def create_analytical_free_energy_plots():
+    plt.rcParams.update({'font.size': 8})
+    plt.figure(figsize=(6, 4), dpi = 400)
+
+    zeta = np.linspace(ZERO, 10, 1000)
+
+    triv_min = 3/2 * (zeta / zeta)
+    plt.plot(zeta, triv_min, label = "Trivial minimum")
+
+    cusp = zeta**(1/3) + 0.5 * zeta**(-2/3)
+    plt.plot(zeta, cusp, label = "Local maximum")
+
+    sec_min = 1/2 * ((1 + 1/zeta) * (2*zeta / (1 + 1/zeta))**(1/3) + zeta * ((1 + 1/zeta)/(2*zeta))**(2/3))
+    plt.plot(zeta, sec_min, label = "Secondary minimum")
+
+    plt.xlabel("Anisotropy parameter, $\\zeta$")
+    plt.ylabel("Scaled and reduced free energy, $\\tilde{F}/v^{2/3}$")
+
+    plt.xlim(0, 5)
+    plt.ylim(1, 3)
+
+    plt.legend(loc='best')
+
+    plt.savefig("Figures/free_energy_vs_zeta.pdf", bbox_inches='tight')
+
 if __name__ == "__main__":
     #create_swell_ratio_plots()
 
     #create_anisotropy_plots()
 
-    create_initial_twist_angle_plots()
+    #create_initial_twist_angle_plots()
+
+    create_analytical_free_energy_plots()
