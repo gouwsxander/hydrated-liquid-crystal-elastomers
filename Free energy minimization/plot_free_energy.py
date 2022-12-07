@@ -36,12 +36,13 @@ def plot_constant_twist_swell_dependence(deformation_anisotropy_array: np.ndarra
                                     initial_twist_angle: float, anisotropy: float,
                                     free_energy_min: float, free_energy_max: float):
     fig, (free_energy_ax, eqm_ax) = create_fig_ax("Swell ratio", "v")
+    free_energy_ax.set_ylabel("Scaled free energy, $\\tilde{F} / v^{2/3}$")
 
     # Plot reduced free energy vs deformation anisotropy
     for swell_ratio in sparse_swell_ratio_array:
         radial_deformation_array = (swell_ratio * deformation_anisotropy_array)**(1/3)
         reduced_free_energy_array = eqm_finder.calc_reduced_free_energy_density(initial_twist_angle, radial_deformation_array, swell_ratio, anisotropy)
-        free_energy_ax.plot(deformation_anisotropy_array, reduced_free_energy_array, label = f"$v = {swell_ratio}$")
+        free_energy_ax.plot(deformation_anisotropy_array, reduced_free_energy_array / swell_ratio**(2/3), label = f"$v = {swell_ratio}$")
 
     free_energy_ax.legend(loc='best')
     free_energy_ax.set_xlim(np.min(deformation_anisotropy_array) - ZERO, np.max(deformation_anisotropy_array))
@@ -86,7 +87,7 @@ def create_swell_ratio_plots():
     plot_constant_twist_swell_dependence(deformation_anisotropy_array,
                                     sparse_swell_ratio_array, dense_swell_ratio_array,
                                     initial_twist_angle, anisotropy,
-                                    0.5, 4)
+                                    1.25, 4.1)
 
 def plot_constant_twist_anisotropy_dependence(deformation_anisotropy_array: np.ndarray,
                                     sparse_anisotropy_array: np.ndarray, dense_anisotropy_array: np.ndarray,
@@ -247,10 +248,10 @@ def create_analytical_free_energy_plots():
     plt.savefig("Figures/free_energy_vs_zeta.pdf", bbox_inches='tight')
 
 if __name__ == "__main__":
-    #create_swell_ratio_plots()
+    create_swell_ratio_plots()
 
     #create_anisotropy_plots()
 
     #create_initial_twist_angle_plots()
 
-    create_analytical_free_energy_plots()
+    #create_analytical_free_energy_plots()
