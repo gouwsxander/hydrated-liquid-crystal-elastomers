@@ -8,18 +8,20 @@ def get_data(data_path):
     df = pd.read_csv(data_path)
 
     deformation_anisotropy_array = df['radial deformation']/df['axial deformation']
-    swell_array = df['swell_ratio']
+    swell_array = df['swelling ratio']
 
     return deformation_anisotropy_array, swell_array
 
 
 def perform_regression(deformation_anisotropy_array, swell_array, verbose = True):
-    linregress_result = linregress(deformation_anisotropy_array, swell_array)
+    linregress_result = linregress(swell_array, deformation_anisotropy_array)
 
     if verbose:
         print(f"Intercept: {linregress_result.intercept}")
         print(f"Slope: {linregress_result.slope}")
         print(f"r: {linregress_result.rvalue}")
+
+    return linregress_result
     
 
 def create_and_save_figure(deformation_anisotropy_array, swell_array, linregress_result):
@@ -28,7 +30,7 @@ def create_and_save_figure(deformation_anisotropy_array, swell_array, linregress
     plt.figure(figsize=(6, 4), dpi = 400)
 
     # Plot data
-    plt.scatter(deformation_anisotropy_array, swell_array, label = "Data")
+    plt.scatter(swell_array, deformation_anisotropy_array, label = "Data")
 
     # Plot trend line
     trend_line_x_range = np.linspace(1, 1.35, 1000)
@@ -42,7 +44,7 @@ def create_and_save_figure(deformation_anisotropy_array, swell_array, linregress
     plt.legend(loc='best')
 
     # Save figure
-    plt.savefig("Figures/experimental_data.pdf", bbox_inches='tight')
+    plt.savefig("Figures/experimental_plot.pdf", bbox_inches='tight')
 
 
 def main(data_path):
@@ -54,4 +56,4 @@ def main(data_path):
 
 
 if __name__ == "__main__":
-    main("stam_hair_data.csv") # From "The Swelling of Human Hair in Water and Water Vapor" by Stam et al.
+    main("Experimental data/stam_hair_data.csv") # From "The Swelling of Human Hair in Water and Water Vapor" by Stam et al.

@@ -1,0 +1,8 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Gouws
+    given-names: Xander Andrew
+title: "Hydration of Liquid Crystal Elastomers"
+version: 1.0.0
+date-released: 2022-12-07
