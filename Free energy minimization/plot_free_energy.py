@@ -87,7 +87,7 @@ def create_swell_ratio_plots():
     plot_constant_twist_swell_dependence(deformation_anisotropy_array,
                                     sparse_swell_ratio_array, dense_swell_ratio_array,
                                     initial_twist_angle, anisotropy,
-                                    1.25, 4.1)
+                                    1.25, 2.5)
 
 def plot_constant_twist_anisotropy_dependence(deformation_anisotropy_array: np.ndarray,
                                     sparse_anisotropy_array: np.ndarray, dense_anisotropy_array: np.ndarray,
@@ -143,7 +143,7 @@ def plot_constant_twist_anisotropy_dependence(deformation_anisotropy_array: np.n
 
 def create_anisotropy_plots(): 
     deformation_anisotropy_array = np.linspace(ZERO, 4, 5000)
-    sparse_anisotropy_array = np.array([0.5, 1.0 + ZERO, 2, 3, 4, 5, 6])
+    sparse_anisotropy_array = np.array([1.0 + ZERO, 2, 3, 4, 5]) #np.array([0.5, 1.0 + ZERO, 2, 3, 4, 5, 6])
     dense_anisotropy_array = np.linspace(ZERO, 5, 1000)
     initial_twist_angle = 5 * np.pi / 180
     swell_ratio = 2
@@ -212,7 +212,7 @@ def plot_constant_twist_initial_twist_angle_dependence(deformation_anisotropy_ar
 
 def create_initial_twist_angle_plots(): 
     deformation_anisotropy_array = np.linspace(0.5, 1.7, 5000)
-    sparse_initial_twist_angle_array = np.array([ZERO, 5, 10, 90 - ZERO]) * np.pi/180
+    sparse_initial_twist_angle_array = np.array([ZERO, 5, 10]) * np.pi/180 #np.array([ZERO, 5, 10, 90 - ZERO]) * np.pi/180
     dense_initial_twist_angle_array = np.linspace(ZERO, 90 - ZERO, 1000) * np.pi / 180
     anisotropy = 1.5
     swell_ratio = 2
@@ -248,9 +248,9 @@ def create_analytical_free_energy_plots():
     plt.savefig("Figures/free_energy_vs_zeta.pdf", bbox_inches='tight')
 
 if __name__ == "__main__":
-    create_swell_ratio_plots()
+    #create_swell_ratio_plots()
 
-    #create_anisotropy_plots()
+    create_anisotropy_plots()
 
     #create_initial_twist_angle_plots()
 
