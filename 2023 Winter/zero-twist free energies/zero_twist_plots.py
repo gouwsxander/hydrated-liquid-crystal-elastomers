@@ -11,17 +11,17 @@ def calc_free_energy(deformation_anisotropy, saturation, perp_wet_dry_ratio, par
     return 0.5 * (2 / (1 + (perp_wet_dry_ratio - 1) * saturation) * deformation_anisotropy**(2/3) + 1/(1 + (par_wet_dry_ratio - 1) * saturation) * deformation_anisotropy**(-4/3))
 
 def plot_free_energy(deformation_anisotropy, saturation, perp_wet_dry_ratio, par_wet_dry_ratio):
-    plt.plot(deformation_anisotropy, calc_free_energy(deformation_anisotropy, saturation, perp_wet_dry_ratio, par_wet_dry_ratio), label=f"$\\phi = {saturation*100}\\%$")
+    plt.plot(deformation_anisotropy, calc_free_energy(deformation_anisotropy, saturation, perp_wet_dry_ratio, par_wet_dry_ratio), label=f"$\\phi = {saturation*100:.00f}\\%$")
 
 def make_free_energy_plot():
     create_figure()
 
     plt.xlabel("Deformation anisotropy, $\\lambda_r / \\lambda_z$")
-    plt.ylabel("Scaled and reduced free energy density, $f \\mu^{-1} \\left(v_{\\mathrm{water}}\\phi/v_{\\mathrm{fiber}} + 1 \\right)^{-2/3}$")
+    plt.ylabel("Scaled free energy density, $f \\mu^{-1} \\left(v_{\\mathrm{water}}\\phi/v_{\\mathrm{fiber}} + 1 \\right)^{-2/3}$")
     
     deformation_anisotropies = np.linspace(0, 8, 1000)
-    perp_wet_dry_ratio = 4
-    par_wet_dry_ratio = 2
+    perp_wet_dry_ratio = 2
+    par_wet_dry_ratio = 1
     plot_free_energy(deformation_anisotropies, 0, perp_wet_dry_ratio, par_wet_dry_ratio)
     plot_free_energy(deformation_anisotropies, 0.25, perp_wet_dry_ratio, par_wet_dry_ratio)
     plot_free_energy(deformation_anisotropies, 0.5, perp_wet_dry_ratio, par_wet_dry_ratio)
@@ -29,9 +29,9 @@ def make_free_energy_plot():
     plot_free_energy(deformation_anisotropies, 1.0, perp_wet_dry_ratio, par_wet_dry_ratio)
 
     plt.xlim(0, 4)
-    plt.ylim(0.4, 2.8)
+    plt.ylim(0.75, 3)
 
-    plt.legend(loc='best')
+    plt.legend(loc='upper left')
     plt.savefig("2023 Winter/Figures/free_energy_density_plot.pdf", bbox_inches='tight')
 
 
@@ -40,7 +40,24 @@ def calc_eqm_anisotropy(saturation, perp_wet_dry_ratio, par_wet_dry_ratio):
 
 def plot_eqm_anisotropy(saturation, perp_wet_dry_ratio, par_wet_dry_ratio):
     plt.plot(saturation, calc_eqm_anisotropy(saturation, perp_wet_dry_ratio, par_wet_dry_ratio),
-        label=f"$\\ell^\\perp_{{\\mathrm{{wet}}}} / \\ell^\\perp_{{\\mathrm{{dry}}}} = {perp_wet_dry_ratio}, \ell^\\parallel_{{\\mathrm{{wet}}}} / \\ell^\\parallel_{{\\mathrm{{dry}}}} = {par_wet_dry_ratio} ",
+        label=f"$\\ell^\\perp_{{\\mathrm{{wet}}}} / \\ell^\\perp_{{\\mathrm{{dry}}}} = {perp_wet_dry_ratio},\; \ell^\\parallel_{{\\mathrm{{wet}}}} / \\ell^\\parallel_{{\\mathrm{{dry}}}} = {par_wet_dry_ratio}$",
     )
 
+def make_anisotropy_plot():
+    create_figure()
+
+    plt.xlabel("Saturation, $\\phi$")
+    plt.ylabel("Equilibrium deformation anisotropy, $\\lambda_r / \\lambda_z$")
+
+    saturations = np.linspace(0, 1, 1000)
+    plot_eqm_anisotropy(saturations, 1, 1)
+    plot_eqm_anisotropy(saturations, 1, 2)
+    plot_eqm_anisotropy(saturations, 2, 1)
+
+    plt.xlim(0, 1)
+
+    plt.legend(loc='best')
+    plt.savefig("2023 Winter/Figures/eqm_anisotropy_plot.pdf", bbox_inches='tight')
+
 make_free_energy_plot()
+make_anisotropy_plot()
