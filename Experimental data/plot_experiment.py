@@ -24,7 +24,7 @@ def perform_regression(deformation_anisotropy_array, swell_array, verbose = True
     return linregress_result
     
 
-def create_and_save_figure(deformation_anisotropy_array, swell_array, linregress_result):
+def create_and_save_figure(deformation_anisotropy_array, swell_array, linregress_result, show_model = True):
     # Set up figure
     plt.rcParams.update({'font.size': 8})
     plt.figure(figsize=(6, 4), dpi = 400)
@@ -37,6 +37,8 @@ def create_and_save_figure(deformation_anisotropy_array, swell_array, linregress
     slope = linregress_result.slope
     intercept = linregress_result.intercept
     plt.plot(trend_line_x_range, intercept + slope * trend_line_x_range, label = "Line of best fit")
+    if show_model:
+        plt.plot(trend_line_x_range, trend_line_x_range * 0 + 1, "--", label = "Current model")
 
     # Labels
     plt.xlabel("Swell ratio, $v$")
