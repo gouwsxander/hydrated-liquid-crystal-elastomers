@@ -27,9 +27,9 @@ plt.show()
 
 # plt.show()
 
-plt.scatter(r_deformations[:-1]**2 * z_deformations[:-1], (r_deformations[1:] - r_deformations[:-1])/(z_deformations[1:] - z_deformations[:-1]))
+# plt.scatter(r_deformations[:-1]**2 * z_deformations[:-1], (r_deformations[1:] - r_deformations[:-1])/(z_deformations[1:] - z_deformations[:-1]))
 
-plt.xlabel("Swelling ratio $\lambda_r^2 \lambda_z$")
-plt.ylabel("Deformation anisotropy $d\lambda_r/d\lambda_z$")
+# plt.xlabel("Swelling ratio $\lambda_r^2 \lambda_z$")
+# plt.ylabel("Deformation anisotropy $d\lambda_r/d\lambda_z$")
 
-plt.show()
+# plt.show()
