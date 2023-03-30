@@ -62,7 +62,7 @@ if __name__ == "__main__":
     max_swell = 1 + 1.2 * (max(swell_array_hair) - 1)
     plot_trend_line(linregress_result_hair, max_swell, '-', "Hair trendline")
 
-    deformation_anisotropy_array_collagen, swell_array_collagen, linregress_result_collagen = process_data("2023 Winter/Experimental data/haverkamp_collagen_data.csv") # From "The Swelling of Human Hair in Water and Water Vapor" by Stam et al.
+    deformation_anisotropy_array_collagen, swell_array_collagen, linregress_result_collagen = process_data("2023 Winter/Experimental data/haverkamp_collagen_data.csv") # From "Collagen Dehydration" by Haverkamp
     plot_data(deformation_anisotropy_array_collagen, swell_array_collagen, '^', "Collagen data")
     max_swell = 1 + 1.05 * (max(swell_array_collagen) - 1)
     plot_trend_line(linregress_result_collagen, max_swell, '--', "Collagen trendline")
