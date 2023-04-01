@@ -57,7 +57,7 @@ def create_square_deformation_figure(direction):
 
     plt.legend(loc='best')
     plt.xlabel("Saturation (grams of water per 100 grams of dry mass), $\\theta$")
-    plt.ylabel(f"Squared {direction} deformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}$")
+    plt.ylabel(f"Squared {direction} deformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}^2$")
 
     plot_utils.save_figure(f"Squared {direction} deformation vs saturation")
 
