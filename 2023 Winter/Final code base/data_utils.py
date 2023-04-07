@@ -15,7 +15,7 @@ def get_saturations(df, substance):
     """
     substance: either "collagen" or "wool"
     """
-    humidities = get_humidities(df)
+    humidities = np.array(get_humidities(df))
 
     df_saturation = get_data_frame("saturation_data")
     reference_humidities = np.array(df_saturation["RH (%)"])
@@ -23,7 +23,7 @@ def get_saturations(df, substance):
 
     saturations = []
     for humidity in humidities:
-        saturations.append(float(reference_saturations[reference_humidities == humidity]))
+        saturations.append(float(reference_saturations[reference_humidities == humidity]) / 100) # Return g/g
 
     return np.array(saturations)
 
@@ -56,3 +56,15 @@ def get_swell_ratios(df):
     swell_ratio_uncertainties = swell_ratios * np.sqrt((axial_deformation_RSD)**2 + 2 * (radial_deformation_RSD)**2)
 
     return swell_ratios, swell_ratio_uncertainties
+
+def get_strain_anisotropies(df):
+    axial_deformations, axial_deformation_uncertainties = get_deformations(df, "axial")
+    radial_deformations, radial_deformation_uncertainties = get_deformations(df, "radial")
+
+    strain_anisotropies = (radial_deformations - 1) / (axial_deformations - 1)
+
+    numerator_RSD = radial_deformation_uncertainties / (radial_deformations - 1)
+    denominator_RSD = axial_deformation_uncertainties / (axial_deformations - 1)
+    strain_anisotropy_uncertainties = strain_anisotropies * np.sqrt(numerator_RSD**2 + denominator_RSD**2)
+    
+    return strain_anisotropies, strain_anisotropy_uncertainties
