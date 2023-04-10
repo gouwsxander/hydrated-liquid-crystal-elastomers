@@ -136,12 +136,12 @@ def create_swell_ratio_figure():
 
     plt.legend(loc='best')
     plt.xlabel("Saturation (grams of water per gram of dry mass), $\\theta$")
-    plt.ylabel("Swell ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
+    plt.ylabel("Swelling ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
 
     plot_utils.save_figure(f"Swell ratio vs saturation")
 
 if __name__ == "__main__":
-    create_square_deformation_figure(direction="axial")
-    create_square_deformation_figure(direction="radial")
-    create_deformation_anisotropy_figure()
+    #create_square_deformation_figure(direction="axial")
+    #create_square_deformation_figure(direction="radial")
+    #create_deformation_anisotropy_figure()
     create_swell_ratio_figure()
