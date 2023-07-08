@@ -13,7 +13,7 @@ LINESTYLES = {"masic_data": "-", "masic_macro_data": "-", "haverkamp_data": "-."
 
 def create_figure():
     plt.rcParams.update({'font.size': 8})
-    plt.figure(figsize=(6, 4), dpi = 400)
+    plt.figure(figsize=(6, 4), dpi = 600)
 
 def save_figure(figure_name):
     plt.savefig(f"{FIGURE_ROOT}/{figure_name}.pdf", bbox_inches='tight')

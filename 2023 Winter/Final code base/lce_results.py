@@ -24,7 +24,7 @@ def get_regression_parameters(filename, direction):
     square_deformations = deformations**2
     square_deformation_uncertainties = 2 * square_deformations * deformation_uncertainties
 
-    initial_saturation = float(saturations[deformations == 1.])
+    initial_saturation = float(saturations[deformations == 1.][0])
 
     # Regression
     linear_model = Model(evaluate_linear_model)
@@ -102,8 +102,11 @@ def create_deformation_anisotropy_figure():
         plt.plot(dense_saturations, estimated_anisotropy, c=color, linestyle=linestyle)
 
     plt.legend(loc='best')
-    plt.xlabel("Saturation (grams of water per gram of dry mass), $\\theta$")
-    plt.ylabel("Deformation anisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
+    xlabel = plt.xlabel("Saturation (grams of water per\ngram of dry mass), $\\theta$")
+    ylabel = plt.ylabel("Deformation\nanisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
+
+    #xlabel.set_wrap(True)
+    #ylabel.set_wrap(True)
 
     plot_utils.save_figure(f"Deformation anisotropy vs saturation")
 
@@ -140,8 +143,85 @@ def create_swell_ratio_figure():
 
     plot_utils.save_figure(f"Swell ratio vs saturation")
 
+def create_deformation_anisotropy_against_swell_figure():
+    plot_utils.create_figure()
+
+    for filename in DATA_FILENAMES:
+        df = data_utils.get_data_frame(filename)
+
+        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+
+        deformation_anisotropies, deformation_anisotropy_uncertainties = data_utils.get_deformation_anisotropies(df)
+        swell_ratios, swell_ratio_uncertainties = data_utils.get_swell_ratios(df)
+
+        color = plot_utils.COLORS[filename]
+        marker = plot_utils.MARKERS[filename]
+        label = plot_utils.LABELS[filename]
+        plt.errorbar(swell_ratios, deformation_anisotropies, deformation_anisotropy_uncertainties, xerr=swell_ratio_uncertainties,
+                     c=color, fmt=marker, label=label,
+                    )
+
+        slope_axial, _, _ = get_regression_parameters(filename, "axial")
+        slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
+
+        saturation_range = max(saturations) - min(saturations)
+        dense_saturations = np.linspace(min(saturations) - 0.05*saturation_range, max(saturations) + 0.05*saturation_range, 1000)
+        estimated_radial_deformation = np.sqrt(evaluate_linear_model([slope_radial], dense_saturations - initial_saturation))
+        estimated_axial_deformation = np.sqrt(evaluate_linear_model([slope_axial], dense_saturations - initial_saturation))
+        estimated_swell_ratio = estimated_radial_deformation**2 * estimated_axial_deformation
+        estimated_anisotropy = estimated_radial_deformation / estimated_axial_deformation
+
+        linestyle = plot_utils.LINESTYLES[filename]
+        plt.plot(estimated_swell_ratio, estimated_anisotropy, c=color, linestyle=linestyle)
+
+    plt.legend(loc='best')
+    plt.xlabel("Swelling ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
+    plt.ylabel("Deformation anisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
+
+    plot_utils.save_figure(f"deformation anisotropy vs swell ratio")
+
+def create_strain_anisotropy_against_swell_figure():
+    plot_utils.create_figure()
+
+    for filename in DATA_FILENAMES:
+        df = data_utils.get_data_frame(filename)
+
+        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+
+        strain_anisotropies, strain_anisotropy_uncertainties = data_utils.get_strain_anisotropies(df)
+        swell_ratios, swell_ratio_uncertainties = data_utils.get_swell_ratios(df)
+
+        color = plot_utils.COLORS[filename]
+        marker = plot_utils.MARKERS[filename]
+        label = plot_utils.LABELS[filename]
+        plt.errorbar(swell_ratios, strain_anisotropies, strain_anisotropy_uncertainties, xerr=swell_ratio_uncertainties,
+                     c=color, fmt=marker, label=label,
+                    )
+
+        slope_axial, _, _ = get_regression_parameters(filename, "axial")
+        slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
+
+        saturation_range = max(saturations) - min(saturations)
+        dense_saturations = np.linspace(min(saturations) - 0.05*saturation_range, max(saturations) + 0.05*saturation_range, 1000)
+        estimated_radial_deformation = np.sqrt(evaluate_linear_model([slope_radial], dense_saturations - initial_saturation))
+        estimated_axial_deformation = np.sqrt(evaluate_linear_model([slope_axial], dense_saturations - initial_saturation))
+        estimated_swell_ratio = estimated_radial_deformation**2 * estimated_axial_deformation
+        estimated_strain_anisotropy = (estimated_radial_deformation - 1) / (estimated_axial_deformation - 1)
+
+        linestyle = plot_utils.LINESTYLES[filename]
+        plt.plot(estimated_swell_ratio, estimated_strain_anisotropy, c=color, linestyle=linestyle)
+
+    plt.legend(loc='best')
+    plt.xlabel("Swelling ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
+    plt.ylabel("Strain anisotropy, $\\varepsilon_r/\\varepsilon_z$")
+
+    plot_utils.save_figure(f"strain anisotropy vs swell ratio")
+
 if __name__ == "__main__":
-    #create_square_deformation_figure(direction="axial")
-    #create_square_deformation_figure(direction="radial")
-    #create_deformation_anisotropy_figure()
+    create_square_deformation_figure(direction="axial")
+    create_square_deformation_figure(direction="radial")
+    create_deformation_anisotropy_figure()
     create_swell_ratio_figure()
+    create_deformation_anisotropy_against_swell_figure()
+    create_strain_anisotropy_against_swell_figure()
+    print("Finished!")

@@ -23,7 +23,10 @@ def get_saturations(df, substance):
 
     saturations = []
     for humidity in humidities:
-        saturations.append(float(reference_saturations[reference_humidities == humidity]) / 100) # Return g/g
+        try:
+            saturations.append(float(reference_saturations[reference_humidities == humidity]) / 100) # Return g/g
+        except:
+            print(f"Warning: Humidity {humidity} not seen.")
 
     return np.array(saturations)
 
