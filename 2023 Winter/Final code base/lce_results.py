@@ -56,7 +56,13 @@ def create_square_deformation_figure(direction):
         color = plot_utils.COLORS[filename]
         marker = plot_utils.MARKERS[filename]
         label = plot_utils.LABELS[filename]
-        plt.errorbar(saturations, square_deformations, square_deformation_uncertainties, c=color, fmt=marker, label=label)
+        
+        filled_plot = deformations != 1
+        hollow_plot = deformations == 1
+        plt.errorbar(saturations[filled_plot], square_deformations[filled_plot], square_deformation_uncertainties[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        plt.errorbar(saturations[hollow_plot], square_deformations[hollow_plot], square_deformation_uncertainties[hollow_plot],
+                     c=color, fmt=marker, mfc='white')
 
         slope, std_err, initial_saturation = get_regression_parameters(filename, direction)
         print(f"{filename} {direction}, slope: {slope} +- {std_err}")
@@ -68,8 +74,8 @@ def create_square_deformation_figure(direction):
         plt.plot(dense_saturations, evaluate_linear_model([slope], dense_saturations - initial_saturation), c=color, linestyle=linestyle)
 
     plt.legend(loc='best')
-    plt.xlabel("Saturation (grams of water per gram of dry mass), $\\theta$")
-    plt.ylabel(f"Squared {direction} deformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}^2$")
+    plt.xlabel("Water saturation (g/g), $\\theta$")
+    plt.ylabel(f"{direction.capitalize()} deformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}^2$")
 
     plot_utils.save_figure(f"Squared {direction} deformation vs saturation")
 
@@ -86,7 +92,13 @@ def create_deformation_anisotropy_figure():
         color = plot_utils.COLORS[filename]
         marker = plot_utils.MARKERS[filename]
         label = plot_utils.LABELS[filename]
-        plt.errorbar(saturations, deformation_anisotropies, deformation_anisotropy_uncertainties, c=color, fmt=marker, label=label)
+
+        filled_plot = deformation_anisotropies != 1
+        hollow_plot = deformation_anisotropies == 1
+        plt.errorbar(saturations[filled_plot], deformation_anisotropies[filled_plot], deformation_anisotropy_uncertainties[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        plt.errorbar(saturations[hollow_plot], deformation_anisotropies[hollow_plot], deformation_anisotropy_uncertainties[hollow_plot],
+                     c=color, fmt=marker, mfc='white')
 
         slope_axial, _, _ = get_regression_parameters(filename, "axial")
         slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
@@ -102,7 +114,7 @@ def create_deformation_anisotropy_figure():
         plt.plot(dense_saturations, estimated_anisotropy, c=color, linestyle=linestyle)
 
     plt.legend(loc='best')
-    xlabel = plt.xlabel("Saturation (grams of water per\ngram of dry mass), $\\theta$")
+    xlabel = plt.xlabel("Water saturation (g/g), $\\theta$")
     ylabel = plt.ylabel("Deformation\nanisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
 
     #xlabel.set_wrap(True)
@@ -123,7 +135,13 @@ def create_swell_ratio_figure():
         color = plot_utils.COLORS[filename]
         marker = plot_utils.MARKERS[filename]
         label = plot_utils.LABELS[filename]
-        plt.errorbar(saturations, swell_ratios, swell_ratio_uncertainties, c=color, fmt=marker, label=label)
+
+        filled_plot = swell_ratios != 1
+        hollow_plot = swell_ratios == 1
+        plt.errorbar(saturations[filled_plot], swell_ratios[filled_plot], swell_ratio_uncertainties[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        plt.errorbar(saturations[hollow_plot], swell_ratios[hollow_plot], swell_ratio_uncertainties[hollow_plot],
+                     c=color, fmt=marker, mfc='white')
 
         slope_axial, _, _ = get_regression_parameters(filename, "axial")
         slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
@@ -138,7 +156,7 @@ def create_swell_ratio_figure():
         plt.plot(dense_saturations, estimated_swell_ratio, c=color, linestyle=linestyle)
 
     plt.legend(loc='best')
-    plt.xlabel("Saturation (grams of water per gram of dry mass), $\\theta$")
+    plt.xlabel("Water saturation (g/g), $\\theta$")
     plt.ylabel("Swelling ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
 
     plot_utils.save_figure(f"Swell ratio vs saturation")
@@ -157,9 +175,15 @@ def create_deformation_anisotropy_against_swell_figure():
         color = plot_utils.COLORS[filename]
         marker = plot_utils.MARKERS[filename]
         label = plot_utils.LABELS[filename]
-        plt.errorbar(swell_ratios, deformation_anisotropies, deformation_anisotropy_uncertainties, xerr=swell_ratio_uncertainties,
-                     c=color, fmt=marker, label=label,
-                    )
+        
+        filled_plot = swell_ratios != 1
+        hollow_plot = swell_ratios == 1
+        plt.errorbar(swell_ratios[filled_plot], deformation_anisotropies[filled_plot],
+                     deformation_anisotropy_uncertainties[filled_plot], xerr=swell_ratio_uncertainties[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        #plt.errorbar(swell_ratios[hollow_plot], deformation_anisotropies[hollow_plot],
+        #             deformation_anisotropy_uncertainties[hollow_plot], xerr=swell_ratio_uncertainties[hollow_plot],
+        #             c=color, fmt=marker, mfc='white')
 
         slope_axial, _, _ = get_regression_parameters(filename, "axial")
         slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
@@ -194,9 +218,13 @@ def create_strain_anisotropy_against_swell_figure():
         color = plot_utils.COLORS[filename]
         marker = plot_utils.MARKERS[filename]
         label = plot_utils.LABELS[filename]
-        plt.errorbar(swell_ratios, strain_anisotropies, strain_anisotropy_uncertainties, xerr=swell_ratio_uncertainties,
-                     c=color, fmt=marker, label=label,
-                    )
+        
+        filled_plot = swell_ratios != 1
+        hollow_plot = swell_ratios == 1
+        plt.errorbar(swell_ratios[filled_plot], strain_anisotropies[filled_plot],
+                     strain_anisotropy_uncertainties[filled_plot], xerr=swell_ratio_uncertainties[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        # note: No hollow plot because undefined for strain_anisotropy
 
         slope_axial, _, _ = get_regression_parameters(filename, "axial")
         slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
