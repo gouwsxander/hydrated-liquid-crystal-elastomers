@@ -17,18 +17,29 @@ def get_saturations(df, substance):
     """
     humidities = np.array(get_humidities(df))
 
-    df_saturation = get_data_frame("saturation_data")
+    df_saturation = get_data_frame(f"saturation_data_{substance}")
     reference_humidities = np.array(df_saturation["RH (%)"])
     reference_saturations = np.array(df_saturation[f"g water per 100 g {substance}"])
 
     saturations = []
     for humidity in humidities:
-        try:
-            saturations.append(float(reference_saturations[reference_humidities == humidity]) / 100) # Return g/g
-        except:
-            print(f"Warning: Humidity {humidity} not seen.")
+        for reference_index in range(len(reference_humidities) - 1):
+            humidity_1 = reference_humidities[reference_index]
+            humidity_2 = reference_humidities[reference_index + 1]
+            if humidity_1 <= humidity and humidity <= humidity_2:
+                saturation_1 = reference_saturations[reference_index]
+                saturation_2 = reference_saturations[reference_index + 1]
 
-    return np.array(saturations)
+                interpolated_saturation = (1 - (humidity - humidity_1) / (humidity_2 - humidity_1)) * saturation_1 + ((humidity - humidity_1) / (humidity_2 - humidity_1)) * saturation_2
+                saturations.append(interpolated_saturation)
+                break
+
+        #try:
+        #    saturations.append(float(reference_saturations[reference_humidities == humidity]))
+        #except:
+        #    print(f"Warning: Humidity {humidity} not seen.")
+
+    return np.array(saturations) / 100 # return g/g
 
 def get_deformations(df, direction):
     """

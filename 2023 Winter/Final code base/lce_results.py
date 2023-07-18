@@ -7,7 +7,7 @@ import data_utils
 
 DATA_FILENAMES = ["masic_data", "stam_data"]
 
-SUBSTANCES = {"masic_data": "collagen", "stam_data": "wool"}
+SUBSTANCES = {"masic_data": "collagen", "stam_data": "hair"}
 
 DEFORMATION_SUBSCRIPTS = {"axial": "z", "radial": "r"}
 
