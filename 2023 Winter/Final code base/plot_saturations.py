@@ -44,4 +44,3 @@ for substance in SUBSTANCES:
     plot_utils.save_figure(f"{substance} saturation curve")
 
     print("")
-

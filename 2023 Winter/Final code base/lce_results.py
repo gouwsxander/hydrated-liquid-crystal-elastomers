@@ -5,7 +5,7 @@ from scipy.odr import Model, RealData, ODR
 import plot_utils
 import data_utils
 
-DATA_FILENAMES = ["masic_data", "stam_data"]
+DATA_FILENAMES = ["stam_data", "masic_data"]
 
 SUBSTANCES = {"masic_data": "collagen", "stam_data": "hair"}
 
@@ -245,11 +245,72 @@ def create_strain_anisotropy_against_swell_figure():
 
     plot_utils.save_figure(f"strain anisotropy vs swell ratio")
 
+def create_deformation_raw_data_figure(direction):
+    plot_utils.create_figure()
+
+    for filename in DATA_FILENAMES:
+        df = data_utils.get_data_frame(filename)
+
+        humidities = data_utils.get_humidities(df)
+        deformations, deformation_errors = data_utils.get_deformations(df, direction)
+
+        color = plot_utils.COLORS[filename]
+        marker = plot_utils.MARKERS[filename]
+        label = plot_utils.LABELS[filename]
+
+        filled_plot = deformations != 1
+        hollow_plot = deformations == 1
+        plt.errorbar(humidities[filled_plot], deformations[filled_plot],
+                     deformation_errors[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        plt.errorbar(humidities[hollow_plot], deformations[hollow_plot],
+                     deformation_errors[hollow_plot],
+                     c=color, fmt=marker, mfc='white')
+
+    plt.legend(loc='best')
+    plt.xlabel("Relative humidity (%)")
+    plt.ylabel(f"{direction.capitalize()} deformations")
+
+    plt.xlim(0, 100)
+
+    plot_utils.save_figure(f"{direction} deformation vs relative humidity")
+
+def create_saturations_raw_data_figure():
+    plot_utils.create_figure()
+
+    markers = {"collagen": "o", "wool": "^", "hair": "v"}
+
+    for substance in ["collagen", "wool", "hair"]:
+
+        df = data_utils.get_data_frame(f"saturation_data_{substance}")
+    
+        humidities = data_utils.get_humidities(df)
+        saturations = data_utils.get_saturations(df, substance)
+
+        plt.scatter(humidities, saturations, marker=markers[substance], label=f"{substance.capitalize()}")
+    
+    plt.xlabel("Relative humidity (%)")
+    plt.ylabel("Water saturation (g/g), $\\theta$")
+    plt.legend(loc='best')
+
+    plt.xlim(0,100)
+
+    plot_utils.save_figure(f"saturation vs relative humidity raw data")
+
+
+
 if __name__ == "__main__":
-    create_square_deformation_figure(direction="axial")
-    create_square_deformation_figure(direction="radial")
-    create_deformation_anisotropy_figure()
-    create_swell_ratio_figure()
-    create_deformation_anisotropy_against_swell_figure()
-    create_strain_anisotropy_against_swell_figure()
+    # create_square_deformation_figure(direction="axial")
+    # create_square_deformation_figure(direction="radial")
+
+    # create_deformation_anisotropy_figure()
+    # create_swell_ratio_figure()
+
+    # create_deformation_anisotropy_against_swell_figure()
+    # create_strain_anisotropy_against_swell_figure()
+
+    create_deformation_raw_data_figure(direction="axial")
+    create_deformation_raw_data_figure(direction="radial")
+    create_saturations_raw_data_figure()
+
     print("Finished!")
