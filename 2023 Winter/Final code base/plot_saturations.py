@@ -6,12 +6,12 @@ import data_utils
 
 SUBSTANCES = ["collagen", "wool"]
 
-MAX_SATURATIONS = {"collagen": [0.5, 0.6, 1.0, 1.1], "wool": [0.3, 0.4, 0.8, 0.9]}
+MAX_SATURATIONS = {"collagen": [0.6], "wool": [0.4]}
 
 MARKERS = ["o", "s", "^", "d"]
 
 B_perps = {"collagen": 0.61, "wool": 0.96}
-B_pars = {"collagen": 0.109, "wool": 0.17}
+B_pars = {"collagen": 0.109, "wool": 0.18}
 
 theta_0 = {"collagen": 0.501, "wool": 0}
 
@@ -19,7 +19,7 @@ for substance in SUBSTANCES:
     print(substance)
     plot_utils.create_figure()
 
-    df = data_utils.get_data_frame("saturation_data")
+    df = data_utils.get_data_frame(f"saturation_data_{substance}")
     
     humidities = data_utils.get_humidities(df)
     saturations = data_utils.get_saturations(df, substance)

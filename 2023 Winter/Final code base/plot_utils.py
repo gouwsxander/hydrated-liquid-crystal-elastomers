@@ -11,9 +11,9 @@ LABELS = {"masic_data": "Collagen", "masic_macro_data": "Collagen",
           "haverkamp_data": "Collagen", "stam_data": "Hair"}
 LINESTYLES = {"masic_data": "-", "masic_macro_data": "-", "haverkamp_data": "-.", "stam_data": "--"}
 
-def create_figure():
+def create_figure(width=3, height=2):
     plt.rcParams.update({'font.size': 7})
-    plt.figure(figsize=(3, 2), dpi = 600)
+    plt.figure(figsize=(width, height), dpi = 600)
 
 def save_figure(figure_name):
     plt.savefig(f"{FIGURE_ROOT}/{figure_name}.pdf", bbox_inches='tight')

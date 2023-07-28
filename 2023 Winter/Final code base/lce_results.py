@@ -7,7 +7,7 @@ import data_utils
 
 DATA_FILENAMES = ["stam_data", "masic_data"]
 
-SUBSTANCES = {"masic_data": "collagen", "stam_data": "hair"}
+SUBSTANCES = {"masic_data": "collagen", "stam_data": "wool"}
 
 DEFORMATION_SUBSCRIPTS = {"axial": "z", "radial": "r"}
 
@@ -42,7 +42,7 @@ def create_square_deformation_figure(direction):
     """
     direction: axial or radial
     """
-    plot_utils.create_figure()
+    #plot_utils.create_figure()
 
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
@@ -73,14 +73,16 @@ def create_square_deformation_figure(direction):
         dense_saturations = np.linspace(min(saturations) - 0.05*saturation_range, max(saturations) + 0.05*saturation_range, 1000)
         plt.plot(dense_saturations, evaluate_linear_model([slope], dense_saturations - initial_saturation), c=color, linestyle=linestyle)
 
-    plt.legend(loc='best')
-    plt.xlabel("Water saturation (g/g), $\\theta$")
-    plt.ylabel(f"{direction.capitalize()} deformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}^2$")
+    if direction == "radial":
+        plt.legend(loc='best')
+    if direction == "axial":
+        plt.xlabel("Water saturation (g/g), $\\theta$")
+    plt.ylabel(f"Squared {direction}\ndeformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}^2$")
 
-    plot_utils.save_figure(f"Squared {direction} deformation vs saturation")
+    #plot_utils.save_figure(f"Squared {direction} deformation vs saturation")
 
 def create_deformation_anisotropy_figure():
-    plot_utils.create_figure()
+    #plot_utils.create_figure()
 
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
@@ -114,16 +116,16 @@ def create_deformation_anisotropy_figure():
         plt.plot(dense_saturations, estimated_anisotropy, c=color, linestyle=linestyle)
 
     plt.legend(loc='best')
-    xlabel = plt.xlabel("Water saturation (g/g), $\\theta$")
+    #xlabel = plt.xlabel("Water saturation (g/g), $\\theta$")
     ylabel = plt.ylabel("Deformation\nanisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
 
     #xlabel.set_wrap(True)
     #ylabel.set_wrap(True)
 
-    plot_utils.save_figure(f"Deformation anisotropy vs saturation")
+    #plot_utils.save_figure(f"Deformation anisotropy vs saturation")
 
 def create_swell_ratio_figure():
-    plot_utils.create_figure()
+    #plot_utils.create_figure()
 
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
@@ -155,11 +157,11 @@ def create_swell_ratio_figure():
         linestyle = plot_utils.LINESTYLES[filename]
         plt.plot(dense_saturations, estimated_swell_ratio, c=color, linestyle=linestyle)
 
-    plt.legend(loc='best')
+    #plt.legend(loc='best')
     plt.xlabel("Water saturation (g/g), $\\theta$")
     plt.ylabel("Swelling ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
 
-    plot_utils.save_figure(f"Swell ratio vs saturation")
+    #plot_utils.save_figure(f"Swell ratio vs saturation")
 
 def create_deformation_anisotropy_against_swell_figure():
     plot_utils.create_figure()
@@ -181,9 +183,9 @@ def create_deformation_anisotropy_against_swell_figure():
         plt.errorbar(swell_ratios[filled_plot], deformation_anisotropies[filled_plot],
                      deformation_anisotropy_uncertainties[filled_plot], xerr=swell_ratio_uncertainties[filled_plot],
                      c=color, fmt=marker, label=label, mfc=color)
-        #plt.errorbar(swell_ratios[hollow_plot], deformation_anisotropies[hollow_plot],
-        #             deformation_anisotropy_uncertainties[hollow_plot], xerr=swell_ratio_uncertainties[hollow_plot],
-        #             c=color, fmt=marker, mfc='white')
+        plt.errorbar(swell_ratios[hollow_plot], deformation_anisotropies[hollow_plot],
+                     deformation_anisotropy_uncertainties[hollow_plot], xerr=swell_ratio_uncertainties[hollow_plot],
+                     c=color, fmt=marker, mfc='white')
 
         slope_axial, _, _ = get_regression_parameters(filename, "axial")
         slope_radial, _, initial_saturation = get_regression_parameters(filename, "radial")
@@ -200,7 +202,7 @@ def create_deformation_anisotropy_against_swell_figure():
 
     plt.legend(loc='best')
     plt.xlabel("Swelling ratio, $\\beta = \\lambda_r^2 \\lambda_z$")
-    plt.ylabel("Deformation anisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
+    plt.ylabel("Deformation\nanisotropy, $\\alpha = \\lambda_r/\\lambda_z$")
 
     plot_utils.save_figure(f"deformation anisotropy vs swell ratio")
 
@@ -246,7 +248,7 @@ def create_strain_anisotropy_against_swell_figure():
     plot_utils.save_figure(f"strain anisotropy vs swell ratio")
 
 def create_deformation_raw_data_figure(direction):
-    plot_utils.create_figure()
+    #plot_utils.create_figure()
 
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
@@ -267,27 +269,32 @@ def create_deformation_raw_data_figure(direction):
                      deformation_errors[hollow_plot],
                      c=color, fmt=marker, mfc='white')
 
-    plt.legend(loc='best')
-    plt.xlabel("Relative humidity (%)")
-    plt.ylabel(f"{direction.capitalize()} deformations")
+    #plt.legend(loc='best')
+    #plt.xlabel("Relative humidity (%)")
+
+    subscript = "z"
+    if direction == "radial":
+        subscript = "r" 
+    plt.ylabel(f"{direction.capitalize()} deformation, $\\lambda_{subscript}$")
 
     plt.xlim(0, 100)
 
-    plot_utils.save_figure(f"{direction} deformation vs relative humidity")
+    #plot_utils.save_figure(f"{direction} deformation vs relative humidity")
 
 def create_saturations_raw_data_figure():
-    plot_utils.create_figure()
+    #plot_utils.create_figure()
 
-    markers = {"collagen": "o", "wool": "^", "hair": "v"}
+    markers = {"collagen": "o", "wool": "s", "hair": "^"}
+    colors = {"collagen": "C0", "wool": "C2", "hair": "C1"}
 
-    for substance in ["collagen", "wool", "hair"]:
+    for substance in ["hair", "collagen", "wool"]:
 
         df = data_utils.get_data_frame(f"saturation_data_{substance}")
     
         humidities = data_utils.get_humidities(df)
         saturations = data_utils.get_saturations(df, substance)
 
-        plt.scatter(humidities, saturations, marker=markers[substance], label=f"{substance.capitalize()}")
+        plt.scatter(humidities, saturations, color=colors[substance], marker=markers[substance], label=f"{substance.capitalize()}")
     
     plt.xlabel("Relative humidity (%)")
     plt.ylabel("Water saturation (g/g), $\\theta$")
@@ -295,9 +302,55 @@ def create_saturations_raw_data_figure():
 
     plt.xlim(0,100)
 
-    plot_utils.save_figure(f"saturation vs relative humidity raw data")
+    #plot_utils.save_figure(f"saturation vs relative humidity raw data")
 
+def create_raw_data_superfigure_vertical():
+    plot_utils.create_figure(3, 6)
 
+    nrows = 3
+    ncols = 1
+
+    ax = plt.subplot(nrows, ncols, 1)
+    #plt.title("(a)")
+    create_deformation_raw_data_figure(direction="radial")
+
+    plt.subplot(nrows, ncols, 2, sharex = ax)
+    #plt.title("(b)")
+    create_deformation_raw_data_figure(direction="axial")
+
+    plt.subplot(nrows, ncols, 3, sharex = ax)
+    #plt.title("(c)")
+    create_saturations_raw_data_figure()
+
+    plot_utils.save_figure("Raw data superfigure")
+
+def create_square_deformation_superfigure():
+    plot_utils.create_figure(3, 4)
+
+    nrows = 2
+    ncols = 1
+
+    ax = plt.subplot(nrows, ncols, 1)
+    create_square_deformation_figure(direction="radial")
+
+    plt.subplot(nrows, ncols, 2, sharex = ax)
+    create_square_deformation_figure(direction="axial")
+
+    plot_utils.save_figure("Square deformation superfigure")
+
+def create_deformation_quantities_superfigure():
+    plot_utils.create_figure(3, 4)
+
+    nrows = 2
+    ncols = 1
+
+    ax = plt.subplot(nrows, ncols, 1)
+    create_deformation_anisotropy_figure()
+
+    plt.subplot(nrows, ncols, 2, sharex = ax)
+    create_swell_ratio_figure()
+
+    plot_utils.save_figure("Deformation quantities superfigure")
 
 if __name__ == "__main__":
     # create_square_deformation_figure(direction="axial")
@@ -309,8 +362,23 @@ if __name__ == "__main__":
     # create_deformation_anisotropy_against_swell_figure()
     # create_strain_anisotropy_against_swell_figure()
 
-    create_deformation_raw_data_figure(direction="axial")
-    create_deformation_raw_data_figure(direction="radial")
-    create_saturations_raw_data_figure()
+    #create_deformation_raw_data_figure(direction="axial")
+    #create_deformation_raw_data_figure(direction="radial")
+    #create_saturations_raw_data_figure()
+
+    # Figure 1
+    create_raw_data_superfigure_vertical()
+
+    # Figure 2
+    create_square_deformation_superfigure()
+
+    # Figure 3A
+    create_deformation_quantities_superfigure()
+
+    # Figure 3B
+    create_deformation_anisotropy_against_swell_figure()
+
+    # Figure 4
+    create_strain_anisotropy_against_swell_figure()
 
     print("Finished!")
