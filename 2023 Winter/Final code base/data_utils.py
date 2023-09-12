@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 
-DATA_ROOT = "2023 Winter/Final code base"
+#DATA_ROOT = "2023 Winter/Final code base" # data root for windows
+DATA_ROOT = "./Documents/GitHub/hydrated-liquid-crystal-elastomers/2023 Winter/Final code base"
 
 def get_data_frame(filename):
     df = pd.read_csv(f"{DATA_ROOT}/{filename}.csv")

@@ -11,6 +11,18 @@ SUBSTANCES = {"masic_data": "collagen", "stam_data": "wool"}
 
 DEFORMATION_SUBSCRIPTS = {"axial": "z", "radial": "r"}
 
+# Fitting of raw RH vs saturation was done on Desmos (desmos.com/calculator/eolbvs6eny)
+HAIR_SATURATION_FIT_PARAMS = {"Xm": 0.0665914, "C": 7.91942, "k": 0.788352}
+COLLAGEN_SATURATION_FIT_PARAMS = {"Xm": 0.109003, "C": 20.1506, "k": 0.823467}
+SATURATION_FIT_PARAMS = {"hair": HAIR_SATURATION_FIT_PARAMS, "collagen": COLLAGEN_SATURATION_FIT_PARAMS}
+
+def saturation_humidity_model(aw, saturation_fit_params):
+    Xm = saturation_fit_params["Xm"]
+    C = saturation_fit_params["C"]
+    k = saturation_fit_params["k"]
+
+    return Xm*C*k*aw / ((1-k*aw) * (1 + (C-1)*k*aw))
+
 def evaluate_linear_model(A, x):
     return A[0] * x + 1
 
@@ -284,17 +296,22 @@ def create_deformation_raw_data_figure(direction):
 def create_saturations_raw_data_figure():
     #plot_utils.create_figure()
 
-    markers = {"collagen": "o", "wool": "s", "hair": "^"}
-    colors = {"collagen": "C0", "wool": "C2", "hair": "C1"}
+    markers = {"collagen": "o", "hair": "^"}
+    colors = {"collagen": "C0", "hair": "C1"}
 
-    for substance in ["hair", "collagen", "wool"]:
-
+    for substance in ["hair", "collagen"]:
+        # Plot raw data
         df = data_utils.get_data_frame(f"saturation_data_{substance}")
     
         humidities = data_utils.get_humidities(df)
         saturations = data_utils.get_saturations(df, substance)
 
         plt.scatter(humidities, saturations, color=colors[substance], marker=markers[substance], label=f"{substance.capitalize()}")
+
+        # Plot fit
+        aw = np.linspace(0, 1, 1000)
+        predicted_saturation = saturation_humidity_model(aw, SATURATION_FIT_PARAMS[substance])
+        plt.plot(100 * aw, predicted_saturation, colors[substance])
     
     plt.xlabel("Relative humidity (%)")
     plt.ylabel("Water saturation (g/g), $\\theta$")
@@ -369,16 +386,16 @@ if __name__ == "__main__":
     # Figure 1
     create_raw_data_superfigure_vertical()
 
-    # Figure 2
-    create_square_deformation_superfigure()
+    # # Figure 2
+    # create_square_deformation_superfigure()
 
-    # Figure 3A
-    create_deformation_quantities_superfigure()
+    # # Figure 3A
+    # create_deformation_quantities_superfigure()
 
-    # Figure 3B
-    create_deformation_anisotropy_against_swell_figure()
+    # # Figure 3B
+    # create_deformation_anisotropy_against_swell_figure()
 
-    # Figure 4
-    create_strain_anisotropy_against_swell_figure()
+    # # Figure 4
+    # create_strain_anisotropy_against_swell_figure()
 
     print("Finished!")

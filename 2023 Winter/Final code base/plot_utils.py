@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
-FIGURE_ROOT = "2023 Winter/Figures"
+#FIGURE_ROOT = "2023 Winter/Figures" #Figure Root Windows
+FIGURE_ROOT = "./Documents/GitHub/hydrated-liquid-crystal-elastomers/2023 Winter/Figures" #Figure Root Mac
 
 #MARKERS = ["o", "s", "^", "d"]
 #LINESTYLES = ["-", "--", "-."]
