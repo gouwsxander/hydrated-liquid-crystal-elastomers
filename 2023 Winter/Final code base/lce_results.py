@@ -7,7 +7,7 @@ import data_utils
 
 DATA_FILENAMES = ["stam_data", "masic_data"]
 
-SUBSTANCES = {"masic_data": "collagen", "stam_data": "wool"}
+SUBSTANCES = {"masic_data": "collagen", "stam_data": "hair"}
 
 DEFORMATION_SUBSCRIPTS = {"axial": "z", "radial": "r"}
 
@@ -29,7 +29,8 @@ def evaluate_linear_model(A, x):
 def get_regression_parameters(filename, direction):
     df = data_utils.get_data_frame(filename)
 
-    saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+    humidities = data_utils.get_humidities(df)
+    saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
 
     deformations, deformation_uncertainties = data_utils.get_deformations(df, direction)
 
@@ -59,7 +60,9 @@ def create_square_deformation_figure(direction):
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
 
-        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+        humidities = data_utils.get_humidities(df)
+        saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
+        #saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
 
         deformations, deformation_uncertainties = data_utils.get_deformations(df, direction)
         square_deformations = deformations**2
@@ -77,9 +80,9 @@ def create_square_deformation_figure(direction):
                      c=color, fmt=marker, mfc='white')
 
         slope, std_err, initial_saturation = get_regression_parameters(filename, direction)
-        print(f"{filename} {direction}, slope: {slope} +- {std_err}")
+        #print(f"{filename} {direction}, slope: {slope} +- {std_err}")
 
-        linestyle=plot_utils.LINESTYLES[filename]
+        linestyle = plot_utils.LINESTYLES[filename]
 
         saturation_range = max(saturations) - min(saturations)
         dense_saturations = np.linspace(min(saturations) - 0.05*saturation_range, max(saturations) + 0.05*saturation_range, 1000)
@@ -99,7 +102,8 @@ def create_deformation_anisotropy_figure():
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
 
-        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+        humidities = data_utils.get_humidities(df)
+        saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
 
         deformation_anisotropies, deformation_anisotropy_uncertainties = data_utils.get_deformation_anisotropies(df)
 
@@ -142,7 +146,8 @@ def create_swell_ratio_figure():
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
 
-        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+        humidities = data_utils.get_humidities(df)
+        saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
 
         swell_ratios, swell_ratio_uncertainties = data_utils.get_swell_ratios(df)
 
@@ -181,7 +186,8 @@ def create_deformation_anisotropy_against_swell_figure():
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
 
-        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+        humidities = data_utils.get_humidities(df)
+        saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
 
         deformation_anisotropies, deformation_anisotropy_uncertainties = data_utils.get_deformation_anisotropies(df)
         swell_ratios, swell_ratio_uncertainties = data_utils.get_swell_ratios(df)
@@ -224,7 +230,8 @@ def create_strain_anisotropy_against_swell_figure():
     for filename in DATA_FILENAMES:
         df = data_utils.get_data_frame(filename)
 
-        saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+        humidities = data_utils.get_humidities(df)
+        saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
 
         strain_anisotropies, strain_anisotropy_uncertainties = data_utils.get_strain_anisotropies(df)
         swell_ratios, swell_ratio_uncertainties = data_utils.get_swell_ratios(df)
@@ -369,6 +376,43 @@ def create_deformation_quantities_superfigure():
 
     plot_utils.save_figure("Deformation quantities superfigure")
 
+def calc_slope_ratio_error(B_perp, delta_B_perp, B_parallel, delta_B_parallel):
+    error_term_1 = delta_B_perp**2 / B_parallel**2
+    error_term_2 = (B_perp * delta_B_parallel)**2 / (B_parallel)**4
+
+    return np.sqrt(error_term_1 + error_term_2)
+
+def calculate_step_length_ratio(B, delta_B, max_saturation, initial_saturation):
+    return 1 + B * max_saturation / (1 - B * initial_saturation), max_saturation * delta_B / (1 - B * initial_saturation)**2
+
+def output_numerical_quantities():
+    B_perp_collagen, delta_B_perp_collagen, initial_saturation_collagen = get_regression_parameters("masic_data", "radial")
+    B_parallel_collagen, delta_B_parallel_collagen, _ = get_regression_parameters("masic_data", "axial")
+
+    B_perp_hair, delta_B_perp_hair, initial_saturation_hair = get_regression_parameters("stam_data", "radial")
+    B_parallel_hair, delta_B_parallel_hair, _ = get_regression_parameters("stam_data", "axial")
+
+    print("Slopes:")
+    print(f"B_perp_collagen = {B_perp_collagen} +- {delta_B_perp_collagen}")
+    print(f"B_parallel_collagen = {B_parallel_collagen} +- {delta_B_parallel_collagen}")
+    print(f"B_perp_hair = {B_perp_hair} +- {delta_B_perp_hair}")
+    print(f"B_parallel_hair = {B_parallel_hair} +- {delta_B_parallel_hair}")
+    print("")
+
+    print("Slope Ratios:")
+    print(f"(B_perp / B_parallel)_collagen = {B_perp_collagen / B_parallel_collagen} +- {calc_slope_ratio_error(B_perp_collagen, delta_B_perp_collagen, B_parallel_collagen, delta_B_parallel_collagen)}")
+    print(f"(B_perp / B_parallel)_hair = {B_perp_hair / B_parallel_hair} +- {calc_slope_ratio_error(B_perp_hair, delta_B_perp_hair, B_parallel_hair, delta_B_parallel_hair)}")
+    print("")
+
+    print("Step Lenghts:")
+    max_saturation_collagen = saturation_humidity_model(1, SATURATION_FIT_PARAMS["collagen"])
+    max_saturation_hair = saturation_humidity_model(1, SATURATION_FIT_PARAMS["hair"])
+    print(f"(l_wet/l_dry)_perp_collagen = {calculate_step_length_ratio(B_perp_collagen, delta_B_perp_collagen, max_saturation_collagen, initial_saturation_collagen)}")
+    print(f"(l_wet/l_dry)_parallel_collagen = {calculate_step_length_ratio(B_parallel_collagen, delta_B_parallel_collagen, max_saturation_collagen, initial_saturation_collagen)}")
+    print(f"(l_wet/l_dry)_perp_hair = {calculate_step_length_ratio(B_perp_hair, delta_B_perp_hair, max_saturation_hair, initial_saturation_hair)}")
+    print(f"(l_wet/l_dry)_parallel_hair = {calculate_step_length_ratio(B_parallel_hair, delta_B_parallel_hair, max_saturation_hair, initial_saturation_hair)}")
+
+
 if __name__ == "__main__":
     # create_square_deformation_figure(direction="axial")
     # create_square_deformation_figure(direction="radial")
@@ -386,16 +430,19 @@ if __name__ == "__main__":
     # Figure 1
     create_raw_data_superfigure_vertical()
 
-    # # Figure 2
-    # create_square_deformation_superfigure()
+    # Figure 2
+    create_square_deformation_superfigure()
 
-    # # Figure 3A
-    # create_deformation_quantities_superfigure()
+    # Figure 3
+    create_deformation_quantities_superfigure()
 
-    # # Figure 3B
-    # create_deformation_anisotropy_against_swell_figure()
+    # Figure 4
+    create_deformation_anisotropy_against_swell_figure()
 
-    # # Figure 4
-    # create_strain_anisotropy_against_swell_figure()
+    # Figure 5
+    create_strain_anisotropy_against_swell_figure()
+
+    # Numerical quantities
+    output_numerical_quantities()
 
     print("Finished!")
