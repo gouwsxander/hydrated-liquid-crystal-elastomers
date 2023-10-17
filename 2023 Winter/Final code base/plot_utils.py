@@ -6,11 +6,11 @@ FIGURE_ROOT = "./2023 Winter/Figures" #Figure Root Mac
 #MARKERS = ["o", "s", "^", "d"]
 #LINESTYLES = ["-", "--", "-."]
 
-COLORS = {"masic_data": "C0", "masic_macro_data": "C0", "haverkamp_data": "C0", "stam_data": "C1"}
-MARKERS = {"masic_data": "o", "masic_macro_data": "o", "haverkamp_data": "s", "stam_data": "^"}
+COLORS = {"masic_data": "C1", "masic_macro_data": "C1", "haverkamp_data": "C1", "stam_data": "C0"}
+MARKERS = {"masic_data": "^", "masic_macro_data": "^", "haverkamp_data": "s", "stam_data": "o"}
 LABELS = {"masic_data": "Collagen", "masic_macro_data": "Collagen",
           "haverkamp_data": "Collagen", "stam_data": "Hair"}
-LINESTYLES = {"masic_data": "-", "masic_macro_data": "-", "haverkamp_data": "-.", "stam_data": "--"}
+LINESTYLES = {"masic_data": "--", "masic_macro_data": "-", "haverkamp_data": "-.", "stam_data": "-"}
 
 def create_figure(width=3, height=2):
     plt.rcParams.update({'font.size': 7})

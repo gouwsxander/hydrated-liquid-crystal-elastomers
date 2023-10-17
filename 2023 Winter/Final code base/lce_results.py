@@ -288,7 +288,8 @@ def create_deformation_raw_data_figure(direction):
                      deformation_errors[hollow_plot],
                      c=color, fmt=marker, mfc='white')
 
-    #plt.legend(loc='best')
+    if direction == "radial":
+        plt.legend(loc='lower right')
     #plt.xlabel("Relative humidity (%)")
 
     subscript = "z"
@@ -322,7 +323,6 @@ def create_saturations_raw_data_figure():
     
     plt.xlabel("Relative humidity (%)")
     plt.ylabel("Water saturation (g/g), $\\theta$")
-    plt.legend(loc='best')
 
     plt.xlim(0,100)
 
@@ -404,9 +404,13 @@ def output_numerical_quantities():
     print(f"(B_perp / B_parallel)_hair = {B_perp_hair / B_parallel_hair} +- {calc_slope_ratio_error(B_perp_hair, delta_B_perp_hair, B_parallel_hair, delta_B_parallel_hair)}")
     print("")
 
-    print("Step Lenghts:")
+    print("Max saturations:")
     max_saturation_collagen = saturation_humidity_model(1, SATURATION_FIT_PARAMS["collagen"])
     max_saturation_hair = saturation_humidity_model(1, SATURATION_FIT_PARAMS["hair"])
+    print(f"max_saturation_collagen = {max_saturation_collagen}")
+    print(f"max_saturation_hair = {max_saturation_hair}")
+
+    print("Step Lenghts:")
     print(f"(l_wet/l_dry)_perp_collagen = {calculate_step_length_ratio(B_perp_collagen, delta_B_perp_collagen, max_saturation_collagen, initial_saturation_collagen)}")
     print(f"(l_wet/l_dry)_parallel_collagen = {calculate_step_length_ratio(B_parallel_collagen, delta_B_parallel_collagen, max_saturation_collagen, initial_saturation_collagen)}")
     print(f"(l_wet/l_dry)_perp_hair = {calculate_step_length_ratio(B_perp_hair, delta_B_perp_hair, max_saturation_hair, initial_saturation_hair)}")
