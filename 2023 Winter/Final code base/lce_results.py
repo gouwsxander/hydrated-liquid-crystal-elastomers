@@ -51,6 +51,49 @@ def get_regression_parameters(filename, direction):
 
     return slope, slope_std_err, initial_saturation
 
+def create_linear_deformation_figure(direction):
+    """
+    direction: axial or radial
+    """
+    # plot_utils.create_figure()
+
+    for filename in DATA_FILENAMES:
+        df = data_utils.get_data_frame(filename)
+
+        humidities = data_utils.get_humidities(df)
+        saturations = saturation_humidity_model(humidities/100, SATURATION_FIT_PARAMS[SUBSTANCES[filename]])
+        #saturations = data_utils.get_saturations(df, SUBSTANCES[filename])
+
+        deformations, deformation_uncertainties = data_utils.get_deformations(df, direction)
+
+        color = plot_utils.COLORS[filename]
+        marker = plot_utils.MARKERS[filename]
+        label = plot_utils.LABELS[filename]
+        
+        filled_plot = deformations != 1
+        hollow_plot = deformations == 1
+        plt.errorbar(saturations[filled_plot], deformations[filled_plot], deformation_uncertainties[filled_plot],
+                     c=color, fmt=marker, label=label, mfc=color)
+        plt.errorbar(saturations[hollow_plot], deformations[hollow_plot], deformation_uncertainties[hollow_plot],
+                     c=color, fmt=marker, mfc='white')
+
+        slope, std_err, initial_saturation = get_regression_parameters(filename, direction)
+        #print(f"{filename} {direction}, slope: {slope} +- {std_err}")
+
+        linestyle = plot_utils.LINESTYLES[filename]
+
+        saturation_range = max(saturations) - min(saturations)
+        dense_saturations = np.linspace(min(saturations) - 0.05*saturation_range, max(saturations) + 0.05*saturation_range, 1000)
+        plt.plot(dense_saturations, np.sqrt(evaluate_linear_model([slope], dense_saturations - initial_saturation)), c=color, linestyle=linestyle)
+
+    if direction == "radial":
+        plt.legend(loc='best')
+    if direction == "axial":
+        plt.xlabel("Water saturation (g/g), $\\theta$")
+    plt.ylabel(f"{direction.capitalize()}\ndeformation, $\\lambda_{DEFORMATION_SUBSCRIPTS[direction]}$")
+
+    # plot_utils.save_figure(f"{direction.capitalize()} deformation vs saturation")
+
 def create_square_deformation_figure(direction):
     """
     direction: axial or radial
@@ -362,6 +405,20 @@ def create_square_deformation_superfigure():
 
     plot_utils.save_figure("Square deformation superfigure")
 
+def create_linear_deformation_superfigure():
+    plot_utils.create_figure(3, 4)
+
+    nrows = 2
+    ncols = 1
+
+    ax = plt.subplot(nrows, ncols, 1)
+    create_linear_deformation_figure(direction="radial")
+
+    plt.subplot(nrows, ncols, 2, sharex = ax)
+    create_linear_deformation_figure(direction="axial")
+
+    plot_utils.save_figure("Deformation superfigure")
+
 def create_deformation_quantities_superfigure():
     plot_utils.create_figure(3, 4)
 
@@ -448,5 +505,8 @@ if __name__ == "__main__":
 
     # Numerical quantities
     output_numerical_quantities()
+
+    # Referree-requested Figure
+    create_linear_deformation_superfigure()
 
     print("Finished!")
