@@ -340,7 +340,7 @@ def create_deformation_raw_data_figure(direction):
         subscript = "r" 
     plt.ylabel(f"{direction.capitalize()} deformation, $\\lambda_{subscript}$")
 
-    plt.xlim(0, 100)
+    plt.xlim(-5, 105)
 
     #plot_utils.save_figure(f"{direction} deformation vs relative humidity")
 
@@ -367,7 +367,7 @@ def create_saturations_raw_data_figure():
     plt.xlabel("Relative humidity (%)")
     plt.ylabel("Water saturation (g/g), $\\theta$")
 
-    plt.xlim(0,100)
+    plt.xlim(-5,105)
 
     #plot_utils.save_figure(f"saturation vs relative humidity raw data")
 
